@@ -10,6 +10,7 @@ chain facts, not advice: who's behind a coin, whether the liquidity can be pulle
 
 **use it**
 
+- **x402 facilitator** · <https://x402.t0ll.xyz> · keyless, free, USDG on robinhood chain · checks the payTo against the seller's ERC-8004 identity (ERC-8478) before it settles, signs a receipt for every payment · [x402 Register](https://x402.t0ll.xyz/#register): every agent selling over x402 on robinhood chain, checked
 - **guard** · `npm i @tollxyz/guard` · one line in front of a viem or ethers wallet: a BLOCK never reaches the signer, a swapped x402 payTo never reaches the payer
 - **MCP server** · [`t0ll-xyz/toll-mcp`](https://github.com/t0ll-xyz/toll-mcp) · remote at `https://t0ll.xyz/api/mcp` · `check_tx`, `presign_risk_report`, `check_coin`, `check_agent` and more
 - **plugins** · [`t0ll-xyz/toll-plugins`](https://github.com/t0ll-xyz/toll-plugins) · ElizaOS, AgentKit, Vercel AI SDK, GOAT, LangChain, Mastra · `npm i @tollxyz/mcp`
