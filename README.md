@@ -56,7 +56,7 @@ we also write the standards behind it, so any wallet, agent or facilitator can r
 - EIP-7702 delegations are blocked.
 - undecoded calls that carry value are blocked.
 - every report is EIP-712 signed and bound to the request digest (ERC-8481).
-- transaction simulation is coming.
+- every transaction is simulated at the current block (balance changes, approvals, revert) and can be checked against the agent's stated intent; a failed simulation is never ALLOW.
 
 </details>
 
