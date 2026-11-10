@@ -9,8 +9,9 @@
 </p>
 
 <p align="center">
-<a href="https://t0ll.xyz/llms.txt"><img alt="MCP: 24 tools, no auth" src="https://img.shields.io/badge/MCP-24%20tools%20%C2%B7%20no%20auth-2f6feb?style=for-the-badge"/></a>
+<a href="https://t0ll.xyz/llms.txt"><img alt="MCP: 27 tools, no auth" src="https://img.shields.io/badge/MCP-27%20tools%20%C2%B7%20no%20auth-2f6feb?style=for-the-badge"/></a>
 <a href="https://x402.t0ll.xyz"><img alt="x402 facilitator" src="https://img.shields.io/badge/x402-facilitator%20%C2%B7%20USDG-1f883d?style=for-the-badge"/></a>
+<a href="#on-chain"><img alt="4 contracts on Robinhood Chain" src="https://img.shields.io/badge/contracts-4%20live%20%C2%B7%20Sourcify-0b7a75?style=for-the-badge"/></a>
 <a href="#erc-updates"><img alt="3 ERC drafts" src="https://img.shields.io/badge/ERCs-3%20drafts%20open-cf222e?style=for-the-badge"/></a>
 </p>
 
@@ -24,7 +25,7 @@
 
 ## About
 
-we build Toll. an agent about to trade on Robinhood Chain asks Toll first and gets one word back: **BLOCK**, **WARN**, **ALLOW** or **WAIT**, with the reasons read from the chain. the same check runs before a transaction is signed and before an x402 payment goes out.
+we build Toll. an agent about to trade on Robinhood Chain asks Toll first and gets one word back: **BLOCK**, **WARN**, **ALLOW** or **WAIT**, with the reasons read from the chain. the same check runs before a transaction is signed and before an x402 payment goes out, and after the trade it keeps watching the coin and the wallet.
 
 we also write the standards behind it, so any wallet, agent or facilitator can read the same facts. three ERC drafts are open at [ethereum/ERCs](https://github.com/ethereum/ERCs), all running in Toll today.
 
@@ -32,11 +33,12 @@ we also write the standards behind it, so any wallet, agent or facilitator can r
 
 | | |
 |---|---|
-| **remote MCP** | `https://t0ll.xyz/mcp` · 24 tools, no auth · official MCP registry: `io.github.t0ll-xyz/toll` |
+| **remote MCP** | `https://t0ll.xyz/mcp` · 27 tools, no auth · official MCP registry: `io.github.t0ll-xyz/toll` |
 | **guard a wallet** | `npm i @tollxyz/guard` · wraps viem wallets and x402 fetch, blocks high-risk by default |
 | **REST** | [OpenAPI](https://t0ll.xyz/openapi.json) · [llms.txt](https://t0ll.xyz/llms.txt) |
 | **A2A** | [agent card](https://t0ll.xyz/.well-known/agent-card.json) |
-| **pay an agent safely** | [x402.t0ll.xyz](https://x402.t0ll.xyz) · USDG on Robinhood Chain |
+| **protect RPC** | `https://rpc.t0ll.xyz` · a drop-in wallet RPC that refuses a transaction Toll would BLOCK |
+| **pay an agent safely** | [x402.t0ll.xyz](https://x402.t0ll.xyz) · USDG on Robinhood Chain, `exact` and `upto` |
 | **alerts** | [t.me/t0ll_bot](https://t.me/t0ll_bot) · watch webhooks + Telegram |
 
 ## What it checks
@@ -48,7 +50,9 @@ we also write the standards behind it, so any wallet, agent or facilitator can r
 | `check_agent` | ERC-8004 agents: card, MCP/x402 endpoints, payee vs agentWallet | facts with date and source |
 | `check_hook` | Uniswap v4 hooks: permissions, upgradability, failing sells | facts |
 | `stock_token` | Robinhood Stock Tokens: Chainlink reference vs pool price | facts with source and time |
-| `watch_coin` | webhooks + Telegram alerts when a watched coin changes | alert |
+| `watch_coin` / `watch_wallet` | webhooks + Telegram alerts when a watched coin or wallet changes (dev sold, new approval, risky token in) | alert |
+| `wallet_approvals` | live ERC-20, NFT and Permit2 approvals, a risk for each, the revoke tx | facts + revoke |
+| [blocklist](https://t0ll.xyz/blocklist) | every address Toll has flagged, open as json / csv / txt | list |
 
 <details>
 <summary>pre-sign rules worth knowing</summary>
@@ -62,11 +66,22 @@ we also write the standards behind it, so any wallet, agent or facilitator can r
 
 ## x402 facilitator
 
-[x402.t0ll.xyz](https://x402.t0ll.xyz) settles USDG on Robinhood Chain. before it settles, it checks that the payee is the seller's registered ERC-8004 agentWallet (ERC-8478), so a swapped payTo never gets paid.
+[x402.t0ll.xyz](https://x402.t0ll.xyz) settles USDG on Robinhood Chain, schemes `exact` (EIP-3009) and `upto` (Permit2: the buyer signs a maximum, the seller takes only the real cost). before it settles, it checks that the payee is the seller's registered ERC-8004 agentWallet (ERC-8478), so a swapped payTo never gets paid.
+
+## On-chain
+
+All on Robinhood Chain (4663), source verified on Sourcify (exact match), no owner and no admin. code: [t0ll-xyz/toll-allow](https://github.com/t0ll-xyz/toll-allow).
+
+| contract | what it does | address |
+|---|---|---|
+| `TollAllowEnforcer` | MetaMask delegation caveat: the delegated call needs Toll's signed ALLOW | [`0x6290…fdb5`](https://robinhoodchain.blockscout.com/address/0x6290dfc474f566b3bf612ad78e9dd3890473fdb5) |
+| `TollGateHook` | Uniswap v4 hook: each swap in a pool that uses it needs an ALLOW for that exact swap | [`0x0832…4080`](https://robinhoodchain.blockscout.com/address/0x08324e1aDeC7a4047D2DA692d02B891179B14080) |
+| `TollAllowModule` | ERC-7579 smart-account module: each executed call needs an ALLOW | [`0xa869…72fd`](https://robinhoodchain.blockscout.com/address/0xa86955745ff2caffed94ee3c363fd86091a972fd) |
+| `TollAssert` | post-trade checks in the same tx: balances moved as simulated, no approval left behind | [`0x7623…e1b1`](https://robinhoodchain.blockscout.com/address/0x7623a849b2c5fa6f6765163bf4bf66aef16fe1b1) |
 
 ## Open source
 
-Everything an agent needs to call Toll lives in [t0ll-xyz/toll-plugins](https://github.com/t0ll-xyz/toll-plugins).
+All public code is in the [t0ll-xyz](https://github.com/t0ll-xyz) organization. Everything an agent needs to call Toll lives in [t0ll-xyz/toll-plugins](https://github.com/t0ll-xyz/toll-plugins); the MCP server is [t0ll-xyz/toll-mcp](https://github.com/t0ll-xyz/toll-mcp); the contracts are [t0ll-xyz/toll-allow](https://github.com/t0ll-xyz/toll-allow).
 
 <details open>
 <summary>packages and examples</summary>
@@ -84,7 +99,7 @@ Everything an agent needs to call Toll lives in [t0ll-xyz/toll-plugins](https://
 | [`toll-sdk`](https://pypi.org/project/toll-sdk/) | Python |
 | examples | OpenAI Agents SDK, CrewAI · Hermes agent catalog |
 
-also: [soli0x/toll-launch-check](https://github.com/soli0x/toll-launch-check), a Uniswap v4 hook that refuses buys in bundled launches, read from the ERC-8470 registry.
+also: [t0ll-xyz/toll-launch-check](https://github.com/t0ll-xyz/toll-launch-check), a Uniswap v4 hook that refuses buys in bundled launches, read from the ERC-8470 registry.
 
 </details>
 
@@ -94,16 +109,17 @@ All Draft at [ethereum/ERCs](https://github.com/ethereum/ERCs). dates are the PR
 
 | ERC | title | status | PR | last update |
 |---|---|---|---|---|
-| ERC-8470 | Token Launch Observations | Draft · PR open | [#2121](https://github.com/ethereum/ERCs/pull/2121) · [forum](https://ethereum-magicians.org/t/pre-erc-launch-observations-the-check-an-agent-reads-before-it-buys-a-token/30112) | 2026-11-04 |
-| ERC-8478 | x402 Payee Verification for ERC-8004 Agents | Draft · PR open | [#2132](https://github.com/ethereum/ERCs/pull/2132) | 2026-11-02 |
-| ERC-8481 | Agent Pre-Sign Risk Report | Draft · PR open | [#2134](https://github.com/ethereum/ERCs/pull/2134) | 2026-11-05 |
+| ERC-8470 | Token Launch Observations | Draft · PR open | [#2121](https://github.com/ethereum/ERCs/pull/2121) · [forum](https://ethereum-magicians.org/t/pre-erc-launch-observations-the-check-an-agent-reads-before-it-buys-a-token/30112) | 2026-11-09 |
+| ERC-8478 | x402 Payee Verification for ERC-8004 Agents | Draft · PR open | [#2132](https://github.com/ethereum/ERCs/pull/2132) | 2026-11-09 |
+| ERC-8481 | Agent Pre-Sign Risk Report | Draft · PR open | [#2134](https://github.com/ethereum/ERCs/pull/2134) | 2026-11-09 |
 
 <details>
 <summary>other contributions</summary>
 
 | repo | PR | status | last update |
 |---|---|---|---|
-| x402-foundation/x402 | [#4084 docs: add Toll Facilitator (Robinhood Chain, USDG)](https://github.com/x402-foundation/x402/pull/4084) | open | 2026-11-05 |
+| x402-foundation/x402 | [#4084 docs: add Toll Facilitator (Robinhood Chain, USDG)](https://github.com/x402-foundation/x402/pull/4084) | open | 2026-11-09 |
+| Hookr-fun/hookr-contracts | [#23 labs: toll-launch-check](https://github.com/Hookr-fun/hookr-contracts/pull/23) | open | 2026-11-09 |
 | priors-agents/priors | [#26 x402: beforePay hook + optional payee check](https://github.com/priors-agents/priors/pull/26) | approved, credited in their next release | 2026-11-07 |
 
 </details>
@@ -127,4 +143,4 @@ building an agent, wallet or launchpad on Robinhood Chain and want the check in 
 
 agents and LLM tooling can read Toll directly: [llms.txt](https://t0ll.xyz/llms.txt), [openapi.json](https://t0ll.xyz/openapi.json), [agent card](https://t0ll.xyz/.well-known/agent-card.json).
 
-<p align="center"><sub><a href="https://t0ll.xyz">t0ll.xyz</a> · ERC-8004 agent #20030 on Robinhood Chain · ERC table last refreshed 2026-11-08 UTC</sub></p>
+<p align="center"><sub><a href="https://t0ll.xyz">t0ll.xyz</a> · ERC-8004 agent #20030 on Robinhood Chain · last refreshed 2026-11-10 UTC</sub></p>
