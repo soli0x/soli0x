@@ -1,4 +1,4 @@
-<h1 align="center">Toll</h1>
+<p align="center"><a href="https://t0ll.xyz"><img src="assets/toll-banner.svg" width="100%" alt="Toll: requests stream into the gate and come out stamped ALLOW, WARN, BLOCK or WAIT"/></a></p>
 
 <p align="center"><b>the safety layer for agentic finance on Robinhood Chain (chain 4663).</b><br/>the check an AI agent calls before it buys, signs or pays. chain facts, not advice.</p>
 
@@ -22,6 +22,8 @@
 <a href="https://pypi.org/project/toll-sdk/"><img alt="PyPI toll-sdk" src="https://img.shields.io/pypi/v/toll-sdk?style=flat-square&label=toll-sdk&logo=pypi&logoColor=white"/></a>
 <a href="https://github.com/t0ll-xyz/toll-plugins"><img alt="toll-plugins stars" src="https://img.shields.io/github/stars/t0ll-xyz/toll-plugins?style=flat-square&logo=github&label=toll-plugins"/></a>
 </p>
+
+<p align="center"><img src="assets/toll-stats.svg" width="100%" alt="28 MCP tools, 4 contracts live, 3 ERC drafts, 11 agent templates"/></p>
 
 ## About
 
