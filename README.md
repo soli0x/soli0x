@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-<a href="https://t0ll.xyz/llms.txt"><img alt="MCP: 27 tools, no auth" src="https://img.shields.io/badge/MCP-27%20tools%20%C2%B7%20no%20auth-2f6feb?style=for-the-badge"/></a>
+<a href="https://t0ll.xyz/llms.txt"><img alt="MCP: 28 tools, no auth" src="https://img.shields.io/badge/MCP-28%20tools%20%C2%B7%20no%20auth-2f6feb?style=for-the-badge"/></a>
 <a href="https://x402.t0ll.xyz"><img alt="x402 facilitator" src="https://img.shields.io/badge/x402-facilitator%20%C2%B7%20USDG-1f883d?style=for-the-badge"/></a>
 <a href="#on-chain"><img alt="4 contracts on Robinhood Chain" src="https://img.shields.io/badge/contracts-4%20live%20%C2%B7%20Sourcify-0b7a75?style=for-the-badge"/></a>
 <a href="#erc-updates"><img alt="3 ERC drafts" src="https://img.shields.io/badge/ERCs-3%20drafts%20open-cf222e?style=for-the-badge"/></a>
@@ -33,12 +33,13 @@ we also write the standards behind it, so any wallet, agent or facilitator can r
 
 | | |
 |---|---|
-| **remote MCP** | `https://t0ll.xyz/mcp` · 27 tools, no auth · official MCP registry: `io.github.t0ll-xyz/toll` |
+| **remote MCP** | `https://t0ll.xyz/mcp` · 28 tools, no auth · official MCP registry: `io.github.t0ll-xyz/toll` |
 | **guard a wallet** | `npm i @tollxyz/guard` · wraps viem wallets and x402 fetch, blocks high-risk by default |
 | **REST** | [OpenAPI](https://t0ll.xyz/openapi.json) · [llms.txt](https://t0ll.xyz/llms.txt) |
 | **A2A** | [agent card](https://t0ll.xyz/.well-known/agent-card.json) |
 | **protect RPC** | `https://rpc.t0ll.xyz` · a drop-in wallet RPC that refuses a transaction Toll would BLOCK |
 | **pay an agent safely** | [x402.t0ll.xyz](https://x402.t0ll.xyz) · USDG on Robinhood Chain, `exact` and `upto` |
+| **launch a paid agent** | [x402.t0ll.xyz/x402/launch](https://x402.t0ll.xyz/x402/launch) · 11 templates, verified from the first call, free test launch |
 | **alerts** | [t.me/t0ll_bot](https://t.me/t0ll_bot) · watch webhooks + Telegram |
 
 ## What it checks
@@ -66,7 +67,9 @@ we also write the standards behind it, so any wallet, agent or facilitator can r
 
 ## x402 facilitator
 
-[x402.t0ll.xyz](https://x402.t0ll.xyz) settles USDG on Robinhood Chain, schemes `exact` (EIP-3009) and `upto` (Permit2: the buyer signs a maximum, the seller takes only the real cost). before it settles, it checks that the payee is the seller's registered ERC-8004 agentWallet (ERC-8478), so a swapped payTo never gets paid.
+[x402.t0ll.xyz](https://x402.t0ll.xyz) settles USDG on Robinhood Chain, schemes `exact` (EIP-3009 or Permit2), `upto` (Permit2: the buyer signs a maximum, the seller takes only the real cost), escrow with refunds, and batch settlement. before it settles, it checks that the payee is the seller's registered ERC-8004 agentWallet (ERC-8478), so a swapped payTo never gets paid, and every settlement gets a signed Toll receipt. outside sellers settle through it since 12 Nov 2026.
+
+launch your own paid agent in 5 minutes at [x402.t0ll.xyz/x402/launch](https://x402.t0ll.xyz/x402/launch): pick one of 11 templates ([t0ll-xyz/toll-agent-templates](https://github.com/t0ll-xyz/toll-agent-templates)), set a price, sign. its ERC-8004 identity is minted, its payout wallet bound to it, and it is listed where agents buy.
 
 ## On-chain
 
@@ -97,7 +100,8 @@ All public code is in the [t0ll-xyz](https://github.com/t0ll-xyz) organization. 
 | [`@tollxyz/mastra`](https://www.npmjs.com/package/@tollxyz/mastra) | Mastra |
 | [`@tollxyz/plugin-elizaos`](https://www.npmjs.com/package/@tollxyz/plugin-elizaos) | ElizaOS |
 | [`toll-sdk`](https://pypi.org/project/toll-sdk/) | Python |
-| examples | OpenAI Agents SDK, CrewAI · Hermes agent catalog |
+| examples | OpenAI Agents SDK, CrewAI · [toll-x402-examples](https://github.com/t0ll-xyz/toll-x402-examples) |
+| Hermes Agent | `hermes plugins install toll` (Hermes plugin catalog) |
 
 also: [t0ll-xyz/toll-launch-check](https://github.com/t0ll-xyz/toll-launch-check), a Uniswap v4 hook that refuses buys in bundled launches, read from the ERC-8470 registry.
 
@@ -120,13 +124,15 @@ All Draft at [ethereum/ERCs](https://github.com/ethereum/ERCs). dates are the PR
 |---|---|---|---|
 | x402-foundation/x402 | [#4084 docs: add Toll Facilitator (Robinhood Chain, USDG)](https://github.com/x402-foundation/x402/pull/4084) | open | 2026-11-09 |
 | Hookr-fun/hookr-contracts | [#23 labs: toll-launch-check](https://github.com/Hookr-fun/hookr-contracts/pull/23) | open | 2026-11-09 |
+| NousResearch/hermes-agent | [#155012 plugin catalog: toll 0.3.0](https://github.com/NousResearch/hermes-agent/pull/155012) | open | 2026-11-13 |
 | priors-agents/priors | [#26 x402: beforePay hook + optional payee check](https://github.com/priors-agents/priors/pull/26) | approved, credited in their next release | 2026-11-07 |
 
 </details>
 
 ## Integrations
 
-- [hookr.fun/integrations](https://hookr.fun/integrations) · listed in the Hookr universe, Agents.
+- [hookr.fun/integrations](https://hookr.fun/integrations) · live app integrator: every call Hookr's MCP builds is checked by `check_tx` before it is signed.
+- Hermes Agent · Toll plugin in the Hermes plugin catalog.
 - Priors · x402 `beforePay` hook, credited in their next release.
 
 ## Pricing
@@ -143,4 +149,4 @@ building an agent, wallet or launchpad on Robinhood Chain and want the check in 
 
 agents and LLM tooling can read Toll directly: [llms.txt](https://t0ll.xyz/llms.txt), [openapi.json](https://t0ll.xyz/openapi.json), [agent card](https://t0ll.xyz/.well-known/agent-card.json).
 
-<p align="center"><sub><a href="https://t0ll.xyz">t0ll.xyz</a> · ERC-8004 agent #20030 on Robinhood Chain · last refreshed 2026-11-10 UTC</sub></p>
+<p align="center"><sub><a href="https://t0ll.xyz">t0ll.xyz</a> · ERC-8004 agent #20030 on Robinhood Chain · last refreshed 2026-11-13 UTC</sub></p>
