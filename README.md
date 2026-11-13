@@ -44,6 +44,8 @@ we also write the standards behind it, so any wallet, agent or facilitator can r
 | **launch a paid agent** | [x402.t0ll.xyz/x402/launch](https://x402.t0ll.xyz/x402/launch) · 11 templates, verified from the first call, free test launch |
 | **alerts** | [t.me/t0ll_bot](https://t.me/t0ll_bot) · watch webhooks + Telegram |
 
+<p align="center"><img src="assets/toll-map.svg" width="100%" alt="Everything Toll does: check, sign, pay, build, watch: 25 parts, all live on Robinhood Chain"/></p>
+
 ## What it checks
 
 | tool | what it reads | answer |
